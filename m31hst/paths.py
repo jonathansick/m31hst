@@ -42,8 +42,8 @@ def phat_phot_path(brick, field, filterset, kind='gst'):
     filterset : str
         Name of the filter set: ``f275w-f336w``.
     """
-    paths = glob.glob(os.path.join(_phat_basedir,
-        "*-b%02i_%s_v1_%s.fits" % (brick, field, filterset, kind)))
+    paths = glob.glob(os.path.join(_phat_basedir(brick),
+        "*-b%02i-f%02i_%s_v1_%s.fits" % (brick, field, filterset, kind)))
     assert len(paths) == 1
     assert os.path.exists(paths[0])
     return paths[0]
@@ -61,11 +61,12 @@ def phat_brick_path(brick, band):
         Name of the filter: e.g. ``f275w``.
     """
     prefix = "hlsp_phat_hst"
-    b = "*-M31-b%02i" % brick
+    b = "*-m31-b%02i" % brick
     postfix = "v1_drz.fits"
     instr = _instr_name(band)
     filename = "_".join((prefix, instr, b, band, postfix))
-    paths = glob.glob(os.path.join(_phat_basedir(brick), filename))
+    temp = os.path.join(_phat_basedir(brick), filename)
+    paths = glob.glob(temp)
     assert len(paths) == 1
     assert os.path.exists(paths[0])
     return paths[0]
@@ -85,7 +86,7 @@ def phat_field_path(brick, field, band):
         Name of the filter: e.g. ``f275w``.
     """
     prefix = "hlsp_phat_hst"
-    b = "*-M31-b%02i-f%02i" % (brick, field)
+    b = "*-m31-b%02i-f%02i" % (brick, field)
     postfix = "v1_drz.fits"
     instr = _instr_name(band)
     filename = "_".join((prefix, instr, b, band, postfix))
