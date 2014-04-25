@@ -12,6 +12,9 @@ directories for the PHAT and Brown HLSP datasets.
 import os
 import glob
 
+BROWNFIELDS = ('halo11', 'stream', 'disk', 'halo21', 'halo35a', 'halo35b')
+BROWNBANDS = ('f606w', 'f814w')
+
 
 def _instr_name(band):
     """Map instrument names to bands."""
@@ -107,6 +110,8 @@ def brown_phot_path(field, kind='cat'):
         Data type. `cat` for photometry catalog, `art` for artificial stars
         and `msk` for a mask image.
     """
+    assert field in BROWNFIELDS
+    assert kind in ('cat', 'art', 'msk')
     if kind == 'cat':
         ext = '_v2_cat.txt'
     elif kind == 'art':
@@ -129,15 +134,9 @@ def brown_image_path(field, band):
     band : str
         Filter name. Either f814w or f606w.
     """
+    assert field in BROWNFIELDS
+    assert band in BROWNBANDS
     path = os.path.join(os.getenv('BROWNDATA', None),
             'hlsp_andromeda_hst_acs-wfc_%s_%s_v2_img.fits' % (field, band))
     assert os.path.exists(path)
     return path
-
-
-def main():
-    pass
-
-
-if __name__ == '__main__':
-    main()
