@@ -23,7 +23,7 @@ def _instr_name(band):
     elif band in ["f110w", "f160w"]:
         instr = "wfc3-ir"
     elif band in ["f275w", "f336w"]:
-        instr = "wf3-uvis"
+        instr = "wfc3-uvis"
     return instr
 
 
@@ -93,7 +93,8 @@ def phat_field_path(brick, field, band):
     postfix = "v1_drz.fits"
     instr = _instr_name(band)
     filename = "_".join((prefix, instr, b, band, postfix))
-    paths = glob.glob(os.path.join(_phat_basedir(brick), filename))
+    s = os.path.join(_phat_basedir(brick), filename)
+    paths = glob.glob(s)
     assert len(paths) == 1
     assert os.path.exists(paths[0])
     return paths[0]
