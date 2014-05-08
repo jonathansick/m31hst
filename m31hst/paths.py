@@ -32,6 +32,10 @@ def _phat_basedir(brick):
     return os.path.join(os.getenv('PHATDATA', None), "brick%02i" % brick)
 
 
+class MissingData(BaseException):
+    pass
+
+
 def phat_phot_path(brick, field, filterset, kind='gst'):
     """Get path to a photometry product for a specific phat field.
     
@@ -47,8 +51,10 @@ def phat_phot_path(brick, field, filterset, kind='gst'):
     """
     paths = glob.glob(os.path.join(_phat_basedir(brick),
         "*-b%02i-f%02i_%s_v1_%s.fits" % (brick, field, filterset, kind)))
-    assert len(paths) == 1
-    assert os.path.exists(paths[0])
+    if not len(paths) == 1:
+        raise MissingData
+    if not os.path.exists(paths[0]):
+        raise MissingData
     return paths[0]
 
 
@@ -70,8 +76,10 @@ def phat_brick_path(brick, band):
     filename = "_".join((prefix, instr, b, band, postfix))
     temp = os.path.join(_phat_basedir(brick), filename)
     paths = glob.glob(temp)
-    assert len(paths) == 1
-    assert os.path.exists(paths[0])
+    if not len(paths) == 1:
+        raise MissingData
+    if not os.path.exists(paths[0]):
+        raise MissingData
     return paths[0]
 
 
@@ -95,8 +103,10 @@ def phat_field_path(brick, field, band):
     filename = "_".join((prefix, instr, b, band, postfix))
     s = os.path.join(_phat_basedir(brick), filename)
     paths = glob.glob(s)
-    assert len(paths) == 1
-    assert os.path.exists(paths[0])
+    if not len(paths) == 1:
+        raise MissingData
+    if not os.path.exists(paths[0]):
+        raise MissingData
     return paths[0]
 
 
@@ -121,7 +131,8 @@ def brown_phot_path(field, kind='cat'):
         ext = '_v2_msk.fits'
     path = os.path.join(os.getenv('BROWNDATA', None),
             'hlsp_andromeda_hst_acs-wfc_%s_f606w-f814w%s' % (field, ext))
-    assert os.path.exists(path)
+    if not os.path.exists(path):
+        raise MissingData
     return path
 
 
@@ -139,5 +150,6 @@ def brown_image_path(field, band):
     assert band in BROWNBANDS
     path = os.path.join(os.getenv('BROWNDATA', None),
             'hlsp_andromeda_hst_acs-wfc_%s_%s_v2_img.fits' % (field, band))
-    assert os.path.exists(path)
+    if not os.path.exists(path):
+        raise MissingData
     return path
