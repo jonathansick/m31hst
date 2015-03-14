@@ -36,12 +36,28 @@ class MissingData(BaseException):
     pass
 
 
-def phat_phot_path(brick, field, filterset, kind='gst'):
+def phat_v2_phot_path(brick):
     """Get path to a photometry product for a specific phat field.
-    
+
     Parameters
     ----------
+    brick : int
+        Number of the brick (1-23).
+    """
+    paths = glob.glob(os.path.join(os.getenv('PHATV2STARDATA', None),
+                                   "*-b%02i_*_v2_st.fits" % (brick)))
+    if not len(paths) == 1:
+        raise MissingData
+    if not os.path.exists(paths[0]):
+        raise MissingData
+    return paths[0]
 
+
+def phat_phot_path(brick, field, filterset, kind='gst'):
+    """Get path to a photometry product for a specific phat field.
+
+    Parameters
+    ----------
     brick : int
         Number of the brick (1-23).
     field : int
@@ -49,8 +65,10 @@ def phat_phot_path(brick, field, filterset, kind='gst'):
     filterset : str
         Name of the filter set: ``f275w-f336w``.
     """
-    paths = glob.glob(os.path.join(_phat_basedir(brick),
-        "*-b%02i-f%02i_%s_v1_%s.fits" % (brick, field, filterset, kind)))
+    paths = glob.glob(
+        os.path.join(_phat_basedir(brick),
+                     "*-b%02i-f%02i_%s_v1_%s.fits" % (brick,
+                                                      field, filterset, kind)))
     if not len(paths) == 1:
         raise MissingData
     if not os.path.exists(paths[0]):
@@ -60,10 +78,9 @@ def phat_phot_path(brick, field, filterset, kind='gst'):
 
 def phat_brick_path(brick, band):
     """Get path to the drizzled FITS image for a PHAT brick.
-    
+
     Parameters
     ----------
-
     brick : int
         Number of the brick (1-23).
     band : str
@@ -85,10 +102,9 @@ def phat_brick_path(brick, band):
 
 def phat_field_path(brick, field, band):
     """Get path to the drizzled FITS image for a specific PHAT field.
-    
+
     Parameters
     ----------
-
     brick : int
         Number of the brick (1-23).
     field : int
@@ -112,7 +128,7 @@ def phat_field_path(brick, field, band):
 
 def brown_phot_path(field, kind='cat'):
     """Get path for a Brown GO-10265 HLSP photometry product.
-    
+
     Parameters
     ----------
     field : str
@@ -129,8 +145,9 @@ def brown_phot_path(field, kind='cat'):
         ext = '_v2_art.fits'
     elif kind == 'msk':
         ext = '_v2_msk.fits'
-    path = os.path.join(os.getenv('BROWNDATA', None),
-            'hlsp_andromeda_hst_acs-wfc_%s_f606w-f814w%s' % (field, ext))
+    path = os.path.join(
+        os.getenv('BROWNDATA', None),
+        'hlsp_andromeda_hst_acs-wfc_%s_f606w-f814w%s' % (field, ext))
     if not os.path.exists(path):
         raise MissingData
     return path
@@ -138,7 +155,7 @@ def brown_phot_path(field, kind='cat'):
 
 def brown_image_path(field, band):
     """Get path for a Brown GO-10265 HLSP drizzled image product.
-    
+
     Parameters
     ----------
     field : str
@@ -148,8 +165,9 @@ def brown_image_path(field, band):
     """
     assert field in BROWNFIELDS
     assert band in BROWNBANDS
-    path = os.path.join(os.getenv('BROWNDATA', None),
-            'hlsp_andromeda_hst_acs-wfc_%s_%s_v2_img.fits' % (field, band))
+    path = os.path.join(
+        os.getenv('BROWNDATA', None),
+        'hlsp_andromeda_hst_acs-wfc_%s_%s_v2_img.fits' % (field, band))
     if not os.path.exists(path):
         raise MissingData
     return path
