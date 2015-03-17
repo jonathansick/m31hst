@@ -16,7 +16,7 @@ Environment Variables
 
 The PHAT data set can be downloaded from [http://archive.stsci.edu/missions/hlsp/phat/]() and the Brown et al HLSP can be downloaded from [https://archive.stsci.edu/prepds/andromeda/datalist.html]().
 
-- `$PHATV2STARDATA` points to a directory with the v2 photometry. This can be downloaded using `wget` with the URL list in the `download_lists/` directory of this repo.
+- `$PHATV2DATA` points to a directory with the v2 photometry. This can be downloaded using `wget` with the URL list in the `download_lists/` directory of this repo.
     
 Info
 ----

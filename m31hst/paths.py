@@ -44,7 +44,8 @@ def phat_v2_phot_path(brick):
     brick : int
         Number of the brick (1-23).
     """
-    paths = glob.glob(os.path.join(os.getenv('PHATV2STARDATA', None),
+    print os.getenv('PHATV2DATA', None)
+    paths = glob.glob(os.path.join(os.getenv('PHATV2DATA', None),
                                    "*-b%02i_*_v2_st.fits" % (brick)))
     if not len(paths) == 1:
         raise MissingData
