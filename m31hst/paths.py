@@ -56,7 +56,7 @@ def phat_v2_phot_path(brick):
 
 def phat_v2_ast_path():
     path = os.path.join(os.getenv('PHATV2DATA'),
-                        'table6.txt')
+                        'table6.dat')
     return path
 
 
