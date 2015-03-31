@@ -54,6 +54,12 @@ def phat_v2_phot_path(brick):
     return paths[0]
 
 
+def phat_v2_ast_path():
+    path = os.path.join(os.getenv('PHATV2DATA'),
+                        'table6.txt')
+    return path
+
+
 def phat_phot_path(brick, field, filterset, kind='gst'):
     """Get path to a photometry product for a specific phat field.
 

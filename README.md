@@ -21,4 +21,4 @@ The PHAT data set can be downloaded from [http://archive.stsci.edu/missions/hlsp
 Info
 ----
 
-Copyright 2013, Jonathan Sick. BSD Licensed.
+Copyright 2013-2015, Jonathan Sick. BSD Licensed.
