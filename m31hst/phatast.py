@@ -6,6 +6,8 @@ PHAT v2 artificial star tests.
 2015-03-31 - Created by Jonathan Sick
 """
 
+import numpy as np
+from sklearn.cluster import KMeans
 from astropy.table import Table
 
 from m31hst.paths import phat_v2_ast_path
@@ -51,3 +53,35 @@ def load_phat_ast_table():
                    guess=False,
                    delimiter=' ')
     return t
+
+
+class PhatAstTable(object):
+    """Data structure for the PHAT AST results."""
+    def __init__(self):
+        super(PhatAstTable, self).__init__()
+        self.t = load_phat_ast_table()
+        cluster_centers, self.labels = self._label_stars()
+        self._define_fields(cluster_centers, self.labels)
+
+    def _label_stars(self):
+        km = KMeans(n_clusters=6)
+        xy = np.vstack((self.t['ra'], self.t['dec'])).T
+        km.fit(xy)
+        return km.cluster_centers_, km.labels_
+
+    def _define_fields(self, cluster_centers, labels):
+        # Pre-baked list of centers, ordered sanely
+        known_centers = [[11.55581084, 42.14674574],
+                         [11.15978774, 41.63931688],
+                         [10.87125638, 41.45011536],
+                         [10.80073952, 41.31165493],
+                         [10.70681719, 41.26110849],
+                         [10.68679924, 41.30852815]]
+        self.fields = []
+        for c in known_centers:
+            dists = np.hypot(c[0] - cluster_centers[:, 0],
+                             c[1] - cluster_centers[:, 1])
+            i = np.argmin(dists)
+            d = {'center': c,
+                 'label': i}
+            self.fields.append(d)
