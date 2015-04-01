@@ -1,4 +1,5 @@
 http://cdsarc.u-strasbg.fr/vizier/ftp/cats/J/ApJS/215/9/table6.dat
+http://cdsarc.u-strasbg.fr/vizier/ftp/cats/J/ApJS/215/9/table7.dat
 http://archive.stsci.edu/pub/hlsp/phat/brick01/hlsp_phat_hst_wfc3-uvis-acs-wfc-wfc3-ir_12058-m31-b01_f275w-f336w-f475w-f814w-f110w-f160w_v2_st.fits
 http://archive.stsci.edu/pub/hlsp/phat/brick02/hlsp_phat_hst_wfc3-uvis-acs-wfc-wfc3-ir_12073-m31-b02_f275w-f336w-f475w-f814w-f110w-f160w_v2_st.fits
 http://archive.stsci.edu/pub/hlsp/phat/brick03/hlsp_phat_hst_wfc3-uvis-acs-wfc-wfc3-ir_12109-m31-b03_f275w-f336w-f475w-f814w-f110w-f160w_v2_st.fits
