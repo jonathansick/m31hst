@@ -85,3 +85,38 @@ class PhatAstTable(object):
             d = {'center': c,
                  'label': i}
             self.fields.append(d)
+
+    def write_crowdfile_for_field(self, path, fieldnum,
+                                  bands=('f275w', 'f336w', 'f475w',
+                                         'f814w', 'f110w', 'f160w')):
+        """Write a StarFISH-compatible crowding file.
+
+        Parameters
+        ----------
+        path : str
+            Filepath where the crowdfile will be written.
+        fieldnum : int
+            Index of the PHAT AST fields to use (0-5).
+        bands : list
+            List of bands (in order) to include in the crowdfile.
+        """
+        label = self.fields[fieldnum]['label']
+        sel = np.where(self.labels == label)[0]
+        cols = [self.t['ra'][sel], self.t['dec'][sel]]
+        fmt = ['%.8f', '%.8f']
+        for band in bands:
+            inkey = "{0}_in".format(band.lower())
+            outkey = "{0}_out".format(band.lower())
+            diffs = self.t[inkey][sel] - self.t[outkey][sel]
+            dropped = np.where(np.abs(diffs) > 9.)[0]
+            indata = np.array(self.t[inkey][sel])
+            diffdata = np.array(diffs)
+            diffdata[dropped] = 9.99
+            cols.append(indata)
+            cols.append(diffdata)
+            fmt.append('%2.2f')
+            fmt.append('%+1.2f')
+        crowddata = np.vstack(cols).T
+        np.savetxt(path, crowddata,
+                   delimiter=' ',
+                   fmt=fmt)
