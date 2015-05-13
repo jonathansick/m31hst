@@ -21,7 +21,14 @@ The PHAT data set can be downloaded from [http://archive.stsci.edu/missions/hlsp
 ```
 wget -i download_lists/star_file_urls_v2.txt -c -P $PHATV2DATA
 ```
+
+- `$DRAINEDATA` points to a directory with the Draine et al 2014 dust maps. Download this dataset with
     
+```
+wget -i download_lists/draine_maps.txt -c -P $DRAINEDATA
+```
+
+
 Info
 ----
 
