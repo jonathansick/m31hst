@@ -9,7 +9,7 @@ PHAT v2 artificial star tests.
 import numpy as np
 from sklearn.cluster import KMeans
 from astropy.table import Table
-
+from astroML.stats import binned_statistic_2d
 from m31hst.paths import phat_v2_ast_path
 
 
@@ -120,3 +120,85 @@ class PhatAstTable(object):
         np.savetxt(path, crowddata,
                    delimiter=' ',
                    fmt=fmt)
+
+    def band_key_in(self, band):
+        return "{0}_in".format(band.lower())
+
+    def band_key_out(self, band):
+        return "{0}_out".format(band.lower())
+
+    def completeness_hess(self, fieldnum, band,
+                          x_mag, y_mag, xlim, ylim, dmag):
+        """Make a Hess diagram of completeness acros the plane."""
+        label = self.fields[fieldnum]['label']
+        s = np.where(self.labels == label)[0]
+        tt = self.t[s]
+
+        if isinstance(y_mag, basestring):
+            # a single mag
+            y = tt[self.band_key_in(y_mag)]
+        else:
+            b1, b2 = y_mag
+            y = tt[self.band_key_in(b1)] - tt[self.band_key_in(b2)]
+
+        if isinstance(x_mag, basestring):
+            # a single mag
+            x = tt[self.band_key_in(x_mag)]
+        else:
+            b1, b2 = x_mag
+            x = tt[self.band_key_in(b1)] - tt[self.band_key_in(b2)]
+
+        # bin the number of stars into the hess plane and the number of
+        # recovered stars to get the completeness fraction
+        def _completeness(values):
+            v = np.array(values)
+            if len(v) == 0:
+                return np.nan
+            else:
+                return float(np.where(v < 90.)[0].shape[0]) / v.shape[0]
+
+        # extend stop so it is included; len(edges) is nx+1
+        x_grid = np.arange(min(xlim), max(xlim) + dmag / 2., dmag)
+        y_grid = np.arange(min(ylim), max(ylim) + dmag / 2., dmag)
+        H, x_edges, y_edges = binned_statistic_2d(x, y,
+                                                  tt[self.band_key_out(band)],
+                                                  statistic=_completeness,
+                                                  bins=[x_grid, y_grid])
+        return H.T, x_edges, y_edges
+
+    def error_hess(self, fieldnum, band,
+                   x_mag, y_mag, xlim, ylim, dmag):
+        """Make a Hess diagram of the mean error across the Hess plane."""
+        label = self.fields[fieldnum]['label']
+        s = np.where(self.labels == label)[0]
+        tt = self.t[s]
+
+        if isinstance(y_mag, basestring):
+            # a single mag
+            y = tt[self.band_key_in(y_mag)]
+        else:
+            b1, b2 = y_mag
+            y = tt[self.band_key_in(b1)] - tt[self.band_key_in(b2)]
+
+        if isinstance(x_mag, basestring):
+            # a single mag
+            x = tt[self.band_key_in(x_mag)]
+        else:
+            b1, b2 = x_mag
+            x = tt[self.band_key_in(b1)] - tt[self.band_key_in(b2)]
+
+        # extend stop so it is included; len(edges) is nx+1
+        x_grid = np.arange(min(xlim), max(xlim) + dmag / 2., dmag)
+        y_grid = np.arange(min(ylim), max(ylim) + dmag / 2., dmag)
+        diff = tt[self.band_key_in(band)] - tt[self.band_key_out(band)]
+
+        def filtered_sigma(vals):
+            """Filter out the dropped stars from sigma computation."""
+            s = np.where(np.abs(vals) < 20.)[0]
+            return np.std(vals[s])
+
+        H, x_edges, y_edges = binned_statistic_2d(x, y,
+                                                  diff,
+                                                  statistic=filtered_sigma,
+                                                  bins=[x_grid, y_grid])
+        return H.T, x_edges, y_edges
